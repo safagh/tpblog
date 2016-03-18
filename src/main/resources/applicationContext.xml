@@ -1,0 +1,133 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util 
+	http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<context:annotation-config />
+	<context:component-scan base-package="fr.treeptik " />
+	<util:properties id="config" location="classpath:config.properties" />
+
+	<jdbc:initialize-database data-source="dataSource">
+		<jdbc:script location="classpath:init.sql" />
+	</jdbc:initialize-database>
+
+	<aop:aspectj-autoproxy />
+	<bean id="notifier" class="fr.treeptik.notify.impl.ConsoleNotifier" />
+	<bean id="notifyAdvice" class="fr.treeptik.notify.aspectj.NotifierAdvice">
+		<property name="notifier" ref="notifier" />
+	</bean>
+
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+
+	<context:component-scan base-package="fr.treeptik.testi18n" />
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<!-- fixe le nom de base des fichiers de message -->
+		<property name="basename" value="messages" />
+	</bean>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="fr.treeptik" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="showSql" value="true" />
+				<property name="generateDdl" value="true" />
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
+			</bean>
+		</property>
+	</bean>
+
+
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+		p:entityManagerFactory-ref="entityManagerFactory">
+	</bean>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- default-autowire="byType"> -->
+
+
+	<!-- Définition d'un bean attribut id=identifiant attribut class -->
+
+	<!-- <bean id="commentaire1" class="model.Commentaire"> -->
+	<!-- <constructor-arg value="1 " /> -->
+	<!-- <constructor-arg value="troll" /> -->
+	<!-- </bean> -->
+
+	<!-- <bean id="commentaire2" class="model.Commentaire"> -->
+	<!-- <constructor-arg value="2 " /> -->
+	<!-- <constructor-arg value="trollolo" /> -->
+	<!-- </bean> -->
+
+	<!-- <bean id="commentaire3" class="model.Commentaire"> -->
+	<!-- <constructor-arg value="3 " /> -->
+	<!-- <constructor-arg value="trollololo" /> -->
+	<!-- </bean> -->
+
+
+	<!-- quand il définit une liste de beans en tq proprietés il selectionne 
+		tous les beans du type de la collection /avec le p il passe par le getter 
+		setter -->
+	<!-- <bean id="article" class="model.Article" p:id="1" p:title="coucou" 
+		p:auteur-ref="auteur"> -->
+	<!-- <property name="id" value="1" /> -->
+	<!-- <property name="title" value="coucou " /> -->
+	<!-- </bean> -->
+
+
+	<!-- <bean id="auteur" class="model.Auteur"> -->
+	<!-- <property name="id" value="1" /> -->
+	<!-- <property name="name" value="Baudelaire " /> -->
+	<!-- </bean> -->
+	<!-- <util:list id="listCommentaires"> -->
+	<!-- <ref bean="commentaire1" /> -->
+	<!-- <ref bean="commentaire2" /> -->
+	<!-- </util:list> -->
+
+
+
+
+</beans>
